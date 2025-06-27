@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.title }} | Kurs tafsilotlari</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        img.course-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin: 20px 0 10px;
+        }
+
+        .meta p {
+            margin: 5px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .module {
+            background: #f1f1f1;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .topic-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .topic-list li {
+            margin-bottom: 15px;
+        }
+
+        iframe, video {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        img.topic-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
+
+    <h1>{{ course.title }}</h1>
+    <div class="meta">
+        <p><strong>O‘qituvchi:</strong> {{ course.owner.get_full_name }}</p>
+        <p><strong>Narxi:</strong> {{ course.price }} so‘m</p>
+        <p><strong>Davomiyligi:</strong> {{ course.duration }}</p>
+    </div>
+
+    <p>{{ course.overview }}</p>
+
+    <a href="#" class="btn">Ro‘yhatdan o‘tish</a>
+
+    <hr>
+
+    <h2>Modullar</h2>
+
+    {% for module in course.modules.all %}
+        <div class="module">
+            <h3>{{ forloop.counter }}-modul: {{ module.title }}</h3>
+            <ul class="topic-list">
+                {% for topic in module.topics.all %}
+                    <li>
+                        <strong>{{ topic.item.title }}</strong><br>
+
+                        {% if topic.content_type.model == 'video' %}
+                            {% with topic.item.url as video_url %}
+                                {% if 'youtu.be/' in video_url %}
+                                    {% with video_url|cut:'https://youtu.be/' as video_id %}
+                                        <iframe width="560" height="315"
+                                                src="https://www.youtube.com/embed/{{ video_id }}"
+                                                frameborder="0" allowfullscreen></iframe>
+                                    {% endwith %}
+                                {% elif 'watch?v=' in video_url %}
+                                    {% with video_url|cut:'https://www.youtube.com/watch?v=' as video_id %}
+                                        <iframe width="560" height="315"
+                                                src="https://www.youtube.com/embed/{{ video_id }}"
+                                                frameborder="0" allowfullscreen></iframe>
+                                    {% endwith %}
+                                {% endif %}
+                            {% endwith %}
+
+                        {% elif topic.content_type.model == "text" %}
+                            <p>{{ topic.item.body }}</p>
+
+                        {% elif topic.content_type.model == "image" %}
+                            <img src="{{ topic.item.image.url }}" alt="Rasm" class="topic-image">
+
+                        {% elif topic.content_type.model == "file" %}
+                            <a href="{{ topic.item.file.url }}" download>📥 Faylni yuklab olish</a>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li>Mavzular mavjud emas.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <p>Modullar mavjud emas.</p>
+    {% endfor %}
+</div>
+</body>
+</html>  

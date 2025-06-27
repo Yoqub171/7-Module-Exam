@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirish</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .form-container {
+            margin-top: 80px;
+            max-width: 400px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .top-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="form-container mx-auto">
+
+        <div class="top-link mb-3">
+            <a href="{% url 'education:index' %}" class="btn btn-outline-secondary btn-lg d-block text-center">
+                🏠 Bosh sahifa
+            </a>
+        </div>
+
+
+        <h3 class="text-center mb-4">Kirish</h3>
+
+        <form method="POST" action="{% url 'users:login_page' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Parol</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Kirish</button>
+        </form>
+
+        <p class="text-center mt-3">Hisob yo‘qmi? <a href="{% url 'users:register_page' %}">Ro‘yxatdan o‘tish</a></p>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-light btn-block border mb-2" style="display: flex; align-items: center; justify-content: center;">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" class="mr-2" alt="Google Logo">
+                Google orqali kirish
+            </a>
+            
+            <a href="{% url 'social:begin' 'github' %}" class="btn btn-dark btn-block" style="display: flex; align-items: center; justify-content: center;">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="20" class="mr-2 bg-white rounded-circle" alt="GitHub Logo">
+                GitHub orqali kirish
+            </a>
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>  

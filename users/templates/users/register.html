@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ro'yhatdan o'tish</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .form-container {
+            margin-top: 60px;
+            max-width: 500px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-container mx-auto">
+
+        <div class="top-link mb-3">
+            <a href="{% url 'education:index' %}" class="btn btn-outline-secondary btn-lg d-block text-center">
+                🏠 Bosh sahifa
+            </a>
+        </div>
+
+        <h3 class="text-center mb-4">Ro‘yxatdan o‘tish</h3>
+        <form method="POST" action = "{% url 'users:register_page' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary btn-block">Ro‘yxatdan o‘tish</button>
+        </form>
+
+        <p class="text-center mt-3">Hisobingiz bormi? <a href="{% url 'users:login_page' %}">Kirish</a></p>
+    </div>
+</div>
+</body>
+</html>
