@@ -80,19 +80,56 @@
     </style>
 </head>
 <body>
+
+<div style="background: #f1f1f1; padding: 15px 30px;">
+    <a href="{% url 'education:index' %}" style="
+        display: inline-block;
+        text-decoration: none;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    " onmouseover="this.style.backgroundColor='#0056b3'" onmouseout="this.style.backgroundColor='#007bff'">
+        ← Bosh sahifaga qaytish
+    </a>
+</div>
+
+
 <div class="container">
     <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
 
     <h1>{{ course.title }}</h1>
     <div class="meta">
-        <p><strong>O‘qituvchi:</strong> {{ course.owner.get_full_name }}</p>
+        {% comment %} <p><strong>O‘qituvchi:</strong> {{ course.owner.get_full_name }}</p> {% endcomment %}
         <p><strong>Narxi:</strong> {{ course.price }} so‘m</p>
         <p><strong>Davomiyligi:</strong> {{ course.duration }}</p>
     </div>
 
     <p>{{ course.overview }}</p>
+    
 
-    <a href="#" class="btn">Ro‘yhatdan o‘tish</a>
+    {% if teacher %}
+        <div class="teacher-card" style="padding: 25px; border: 1px solid #ddd; border-radius: 12px; background: #fefefe; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <div style="display: flex; align-items: center;">
+                {% if teacher.image %}
+                    <img src="{{ teacher.image.url }}" alt="{{ teacher.full_name }}"
+                        style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-right: 25px;">
+                {% endif %}
+                <div>
+                    <p style="margin: 0; color: #888; font-size: 14px;">O‘qituvchi</p>
+                    <h3 style="margin: 5px 0;">{{ teacher.full_name }}</h3>
+                    <p style="margin: 0; font-weight: bold; color: #444;">{{ teacher.position }}</p>
+                    <p style="margin-top: 10px; color: #555;">{{ teacher.bio }}</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+
+    <a href="{% url 'users:register_page' %}" class="btn">Ro‘yhatdan o‘tish</a>
 
     <hr>
 

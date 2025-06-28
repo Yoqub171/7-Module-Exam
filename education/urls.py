@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import index, about_view, teachers_view, course_detail, courses_view
+from .views import IndexView, AboutView, TeacherListView, CourseView, CoursesView
 
 app_name = 'education'
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('about/', about_view, name='about'),
-    path('teachers/', teachers_view, name='teachers'),
-    path('courses/', courses_view, name='courses'),
-    path('courses/<int:pk>/', course_detail, name='course_detail'),
+    path('', IndexView.as_view(), name='index'),
+    path('about/', AboutView.as_view(), name='about'),
+    path('teachers/', TeacherListView.as_view(), name='teachers'),
+    path('courses/', CoursesView.as_view(), name='courses'),
+    path('courses/<int:pk>/', CourseView.as_view(), name='course_detail'),
 ]

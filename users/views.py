@@ -21,16 +21,17 @@ class LoginPage(FormView):
 
     def form_valid(self, form):
         cd = form.cleaned_data
-        user = authenticate(self.request, email=cd['email'], password=cd['password'])
+        print("CD:", cd)
+
+        user = authenticate(self.request, username=cd['email'], password=cd['password'])
+        print("Authenticate user:", user)
 
         if user and user.is_active:
             login(self.request, user)
             return redirect('education:index')
         else:
-            messages.error(self.request, 'Email yoki parol noto‘g‘ri yoki email tasdiqlanmagan.')
+            messages.error(self.request, 'Login muvaffaqiyatsiz.')
             return self.form_invalid(form)
-
-
 
     
 def logout_page(request):

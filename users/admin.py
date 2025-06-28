@@ -2,22 +2,20 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
-@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('email', 'full_name', 'is_active', 'is_superuser')
-    list_filter = ('is_active', 'is_staff')
+    list_display = ['email', 'full_name', 'is_active', 'is_staff']
+    ordering = ['email']
+    search_fields = ['email']
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('full_name', 'phone_number', 'image')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Dates', {'fields': ('last_login',)}),
+        (None, {'fields': ('email', 'password', 'full_name')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'full_name', 'phone_number', 'image', 'password1', 'password2'),
+            'fields': ('email', 'full_name', 'password1', 'password2'),
         }),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
+
+# admin.site.register(CustomUser, CustomUserAdmin)

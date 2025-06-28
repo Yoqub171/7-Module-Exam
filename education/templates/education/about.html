@@ -36,29 +36,45 @@
                 </a>
             </div>
             <div class="col-lg-3 text-right">
-                <div class="d-inline-flex align-items-center">
+                <a href="https://www.google.com/maps/place/Najot+Ta%CA%BBlim+Xadra+filiali/@41.330504,69.248322,17z" 
+                target="_blank" 
+                class="d-inline-flex align-items-center text-decoration-none text-dark">
                     <i class="fa fa-2x fa-map-marker-alt text-primary mr-3"></i>
                     <div class="text-left">
                         <h6 class="font-weight-semi-bold mb-1">Our Office</h6>
-                        <small>123 Street, New York, USA</small>
+                        <small>N.T. Xadra filiali</small>
                     </div>
-                </div>
+                </a>
             </div>
+
             <div class="col-lg-3 text-right">
                 <div class="d-inline-flex align-items-center">
                     <i class="fa fa-2x fa-envelope text-primary mr-3"></i>
                     <div class="text-left">
                         <h6 class="font-weight-semi-bold mb-1">Email Us</h6>
-                        <small>info@example.com</small>
+                        <small>
+                            {% if request.user.is_authenticated %}
+                                {{ request.user.email }}
+                            {% else %}
+                                info@example.com
+                            {% endif %}
+                        </small>
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-3 text-right">
                 <div class="d-inline-flex align-items-center">
                     <i class="fa fa-2x fa-phone text-primary mr-3"></i>
                     <div class="text-left">
                         <h6 class="font-weight-semi-bold mb-1">Call Us</h6>
-                        <small>+012 345 6789</small>
+                        <small>
+                            {% if request.user.is_authenticated and request.user.phone_number %}
+                                {{ request.user.phone_number }}
+                            {% else %}
+                                +998 90 123 45 67
+                            {% endif %}
+                        </small>
                     </div>
                 </div>
             </div>
@@ -189,7 +205,7 @@
                             <h1 class="m-0">Sign Up Now</h1>
                         </div>
                         <div class="card-body rounded-bottom bg-primary p-5">
-                            <form>
+                            <form action="{% url 'users:register_page' %}" method="get">
                                 <div class="form-group">
                                     <input type="text" class="form-control border-0 p-4" placeholder="Your name" required="required" />
                                 </div>
@@ -199,9 +215,9 @@
                                 <div class="form-group">
                                     <select class="custom-select border-0 px-4" style="height: 47px;">
                                         <option selected>Select a course</option>
-                                        <option value="1">Course 1</option>
-                                        <option value="2">Course 1</option>
-                                        <option value="3">Course 1</option>
+                                        {% for course in courses %}
+                                            <option value="1">{{ course.title }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div>
@@ -257,15 +273,41 @@
 
 
     <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-white py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
+        <div class="container-fluid bg-dark text-white py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
         <div class="row pt-5">
             <div class="col-lg-7 col-md-12">
                 <div class="row">
                     <div class="col-md-6 mb-5">
                         <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 5px;">Get In Touch</h5>
-                        <p><i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA</p>
-                        <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
-                        <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+                        
+                        <p>
+                            <i class="fa fa-map-marker-alt mr-2"></i>
+                            <a href="https://www.google.com/maps/place/Najot+Ta%CA%BBlim+Xadra+filiali/@41.330504,69.248322,17z"
+                            class="text-white text-decoration-none" target="_blank">
+                            N.T Xadra Filiali
+                            </a>
+                        </p>
+
+                        <p>
+                            <i class="fa fa-phone-alt mr-2"></i>
+                            <a href="#" class="text-white text-decoration-none">
+                                {% if request.user.is_authenticated %}
+                                    {{ request.user.phone_number }}
+                                {% else %}
+                                    +998 90 123 45 67
+                                {% endif %}
+                            </a>
+                        </p>
+
+                        <p>
+                            <i class="fa fa-envelope mr-2"></i>
+                            {% if request.user.is_authenticated %}
+                                {{ request.user.email }}
+                            {% else %}
+                                info@example.com
+                            {% endif %}
+                        </p>
+
                         <div class="d-flex justify-content-start mt-4">
                             <a class="btn btn-outline-light btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
                             <a class="btn btn-outline-light btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
@@ -273,15 +315,14 @@
                             <a class="btn btn-outline-light btn-square" href="#"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-5">
                         <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 5px;">Our Courses</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Web Design</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Apps Design</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Marketing</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Research</a>
-                            <a class="text-white" href="#"><i class="fa fa-angle-right mr-2"></i>SEO</a>
-                        </div>
+                        {% for course in courses %}
+                            <div class="d-flex flex-column justify-content-start">
+                                <a class="text-white mb-2" href="{% url 'education:course_detail' course.pk %}"><i class="fa fa-angle-right mr-2"></i>{{ course.title }}</a>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -292,7 +333,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control border-light" style="padding: 30px;" placeholder="Your Email Address">
                         <div class="input-group-append">
-                            <button class="btn btn-primary px-4">Sign Up</button>
+                            <button class="btn btn-primary px-4"><a href="{% url 'users:register_page' %}" class="text-white text-decoration-none">Sign Up</a></button>
                         </div>
                     </div>
                 </div>
@@ -337,11 +378,11 @@
     <script src="{% static 'education/lib/owlcarousel/owl.carousel.min.js' %}"></script>
 
     <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
+    <script src="{% static 'education/mail/jqBootstrapValidation.min.js' %}"></script>
+    <script src="{% static 'education/mail/contact.js' %}"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="{% static 'education/js/main.js' %}"></script>
 </body>
 
 </html>

@@ -258,16 +258,16 @@
                     {% for course in popular_courses %}
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="rounded overflow-hidden mb-2">
-                                <img class="img-fluid" src="{{ course.image.url }}" alt="">
+                                <a href="{% url 'education:course_detail' course.pk %}">
+                                    <img class="img-fluid" src="{{ course.image.url }}" alt="{{ course.title }}">
+                                </a>
                                 <div class="bg-secondary p-4">
                                     <div class="d-flex justify-content-between mb-3">
-                                        <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>{{ course.student_count }} Students</small>
                                         <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ course.duration }}</small>
                                     </div>
-                                    <a class="h5" href="">{{ course.title }}</a>
+                                    <a class="h5" href="{% url 'education:course_detail' course.pk %}">{{ course.title }}</a>
                                     <div class="border-top mt-4 pt-4">
                                         <div class="d-flex justify-content-between">
-                                            <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>(250)</small></h6>
                                             <h5 class="m-0">${{ course.price }}</h5>
                                         </div>
                                     </div>
@@ -276,6 +276,7 @@
                         </div>
                     {% endfor %}
                 </div>
+
             </div>
         </div>
     </div>
@@ -306,7 +307,7 @@
                             <h1 class="m-0">Sign Up Now</h1>
                         </div>
                         <div class="card-body rounded-bottom bg-primary p-5">
-                            <form>
+                            <form action="{% url 'users:register_page' %}" method="get">
                                 <div class="form-group">
                                     <input type="text" class="form-control border-0 p-4" placeholder="Your name" required="required" />
                                 </div>
@@ -316,9 +317,9 @@
                                 <div class="form-group">
                                     <select class="custom-select border-0 px-4" style="height: 47px;">
                                         <option selected>Select a course</option>
-                                        <option value="1">Course 1</option>
-                                        <option value="2">Course 1</option>
-                                        <option value="3">Course 1</option>
+                                        {% for course in courses %}
+                                            <option value="1">{{ course.title }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div>
@@ -342,70 +343,28 @@
                 <h1>Meet Our Teachers</h1>
             </div>
             <div class="row">
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="{% static 'education/img/team-1.jpg' %}" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
+                {% for teacher in teachers %}
+                    <div class="col-md-6 col-lg-3 text-center team mb-4">
+                        <div class="team-item rounded overflow-hidden mb-2">
+                            <div class="team-img position-relative">
+                                {% if teacher.image %}
+                                    <img src="{{ teacher.image.url }}" class="card-img-top" alt="{{ teacher.full_name }}">
+                                {% else %}
+                                    <img class="img-fluid" src="{% static 'education/img/team-1.jpg' %}" alt="">
+                                {% endif %}
+                                    <div class="team-social">
+                                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                            <div class="bg-secondary p-4">
+                                <h5>{{ teacher.full_name }}</h5>
+                                <p class="m-0">{{ teacher.position }}</p>
                             </div>
                         </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="{% static 'education/img/team-2.jpg' %}" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="{% static 'education/img/team-3.jpg' %}" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="{% static 'education/img/team-4.jpg' %}" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -538,13 +497,11 @@
 
                     <div class="col-md-6 mb-5">
                         <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 5px;">Our Courses</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Web Design</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Apps Design</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Marketing</a>
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Research</a>
-                            <a class="text-white" href="#"><i class="fa fa-angle-right mr-2"></i>SEO</a>
-                        </div>
+                        {% for course in courses %}
+                            <div class="d-flex flex-column justify-content-start">
+                                <a class="text-white mb-2" href="{% url 'education:course_detail' course.pk %}"><i class="fa fa-angle-right mr-2"></i>{{ course.title }}</a>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

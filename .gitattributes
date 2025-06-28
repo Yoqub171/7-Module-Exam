@@ -1,0 +1,11 @@
+# Git line endings management
+* text=auto
+
+# Python files use LF endings
+*.py text eol=lf
+
+# Web-related files
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf

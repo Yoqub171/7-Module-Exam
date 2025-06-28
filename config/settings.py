@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'education',
     'users',
     'social_django',
+    'import_export',
+
 ]
 
 MIDDLEWARE = [
@@ -52,7 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-
+    'config.middleware.RequestLoggingMiddleware',
+    'config.middleware.AutoLogoutMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -125,7 +128,8 @@ from dotenv import load_dotenv
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
