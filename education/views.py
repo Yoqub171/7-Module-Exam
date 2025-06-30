@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from .models import Subject, Course, Teacher
 from django.views.generic import ListView, TemplateView, DetailView
 
-
 # def index(request):
 #     search_query = request.GET.get('q', '')
 #     subject_id = request.GET.get('subject')

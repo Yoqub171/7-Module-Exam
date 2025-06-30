@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'users',
     'social_django',
     'import_export',
-
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
