@@ -2,7 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
 from education.models import (
-    Subject, Course, Module, Text, Video, Image, File, Topic, Teacher
+    Subject, Course, Module, Text, Video, Image, File, Topic, Teacher, Comment, Rating
 )
 from users.models import CustomUser
 
@@ -96,3 +96,18 @@ class TeacherAdmin(ImportExportModelAdmin):
 class CustomUserAdmin(ImportExportModelAdmin):
     resource_class = CustomUserResource
     list_display = ('id', 'full_name', 'email', 'is_teacher', 'is_staff', 'joined')
+
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'course', 'text', 'created_at']
+    search_fields = ['text', 'user__username', 'course__title']
+    list_filter = ['created_at']
+
+
+@admin.register(Rating)
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ['user', 'course', 'value']
+    list_filter = ['value']
+    search_fields = ['user__username', 'course__title']

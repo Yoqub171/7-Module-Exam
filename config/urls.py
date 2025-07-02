@@ -25,5 +25,4 @@ urlpatterns = [
     path('users/', include('users.urls', namespace='users')),
     path('auth/', include('social_django.urls', namespace='social')),
     path('api-auth/', include('rest_framework.urls')),
-    # path('course/',include('course.urls')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -133,6 +133,33 @@
 
     <hr>
 
+    <div style="margin: 30px 0; padding: 20px; background: #f1f1f1; border-radius: 10px;">
+        <h2>O‘rtacha baho:</h2>
+        <p style="font-size: 24px; font-weight: bold;">
+            ⭐ {{ avg_rating|floatformat:1 }} / 5
+        </p>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <h2>Foydalanuvchi fikrlari:</h2>
+        {% if comments %}
+            <ul style="list-style: none; padding: 0;">
+                {% for comment in comments %}
+                    <li style="margin-bottom: 20px; padding: 15px; background: #fdfdfd; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <strong>{{ comment.user }}</strong>  
+                        <br>
+                        <span style="color: #555;">{{ comment.text }}</span>
+                        <br>
+                        <small style="color: #888;">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Hozircha fikrlar mavjud emas.</p>
+        {% endif %}
+    </div>
+
+
     <h2>Modullar</h2>
 
     {% for module in course.modules.all %}

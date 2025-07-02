@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Subject, Course, Teacher
+from .models import Subject, Course, Teacher, Comment
+from django.db.models import Avg
 from django.views.generic import ListView, TemplateView, DetailView
 
 # def index(request):
@@ -99,7 +100,7 @@ class TeacherListView(ListView):
 #     })
 
 
-class CoursesView(ListView):
+class CourseView(ListView):
     model = Course
     template_name = 'education/course.html'
     context_object_name = 'courses'
@@ -126,7 +127,7 @@ class CoursesView(ListView):
 #     return render(request, 'education/course_detail.html', context)
 
 
-class CourseView(DetailView):
+class CourseDetail(DetailView):
     model = Course
     template_name = 'education/course_detail.html'
     context_object_name = 'course'
@@ -137,5 +138,11 @@ class CourseView(DetailView):
 
         teacher = getattr(course.owner, 'teacher_profile', None)
         context['teacher'] = teacher
+
+        comments = Comment.objects.filter(course=course)
+        avg_rating = course.ratings.aggregate(avg=Avg('value'))['avg'] or 0
+
+        context['comments'] = comments
+        context['avg_rating'] = round(avg_rating, 1)
 
         return context
