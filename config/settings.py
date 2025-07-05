@@ -173,3 +173,10 @@ LOGOUT_REDIRECT_URL = 'education:index'
 
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 SOCIAL_AUTH_GITHUB_EXTRA_DATA = ['email']
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

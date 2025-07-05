@@ -4,9 +4,11 @@ from ..models import Subject, Course, Comment, Rating
 from rest_framework.status import HTTP_404_NOT_FOUND,HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST
 from .serializers import SubjectModelSerializers, CourseModelSerializers, CommentSerializers, RatingSerializers
 from django.db.models import Avg, Count
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from .permissions import MondayFriday, IsOwnerOrReadOnly, JohnReadOnly, IsJohnBlocked, CanReadPremiumCourse, IsEvenYear, LoginOnlySuperUser, PutPatchOnly
+
     
 
 # class SubjectList(APIView):
@@ -144,6 +146,7 @@ class SubjectDetailAPIView(RetrieveUpdateDestroyAPIView):
 class CourseListCreateAPIView(ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseModelSerializers
+    permission_classes = [IsAuthenticated, LoginOnlySuperUser]
 
     def get_queryset(self):
         queryset = Course.objects.all().order_by('-id')
@@ -154,6 +157,7 @@ class CourseDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all().annotate(avg_rating = Avg('ratings__value'))
     serializer_class = CourseModelSerializers
     lookup_url_kwarg = 'course_id'
+    permission_classes = [IsAuthenticated, LoginOnlySuperUser]
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -193,3 +197,11 @@ class RatingViewSet(viewsets.ModelViewSet):
             serializer.save(user=self.request.user)
 
         
+class PremiumCourse(ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseModelSerializers
+    permission_classes = [CanReadPremiumCourse, IsEvenYear]
+
+    def get_queryset(self):
+        return Course.objects.filter(is_premium = True)
+

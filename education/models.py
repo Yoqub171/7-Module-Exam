@@ -20,6 +20,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='course/images')
     subject = models.ForeignKey(Subject,on_delete=models.CASCADE,related_name='courses')
     created = models.DateTimeField(auto_now_add=True)
+    is_premium = models.BooleanField(default=False)
     
     def __str__(self):
         return self.title
