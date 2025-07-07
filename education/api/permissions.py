@@ -48,3 +48,4 @@ class LoginOnlySuperUser(permissions.BasePermission):
 class PutPatchOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.method in ['PUT', 'PATCH']
+

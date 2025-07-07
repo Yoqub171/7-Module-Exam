@@ -1,13 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from ..models import Subject, Course, Comment, Rating
-from rest_framework.status import HTTP_404_NOT_FOUND,HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_404_NOT_FOUND,HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 from .serializers import SubjectModelSerializers, CourseModelSerializers, CommentSerializers, RatingSerializers
 from django.db.models import Avg, Count
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import MondayFriday, IsOwnerOrReadOnly, JohnReadOnly, IsJohnBlocked, CanReadPremiumCourse, IsEvenYear, LoginOnlySuperUser, PutPatchOnly
+from .tokens import get_or_create_token
+from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
+
+User = get_user_model()
+
 
     
 
@@ -146,7 +152,7 @@ class SubjectDetailAPIView(RetrieveUpdateDestroyAPIView):
 class CourseListCreateAPIView(ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseModelSerializers
-    permission_classes = [IsAuthenticated, LoginOnlySuperUser]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Course.objects.all().order_by('-id')
@@ -157,7 +163,7 @@ class CourseDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all().annotate(avg_rating = Avg('ratings__value'))
     serializer_class = CourseModelSerializers
     lookup_url_kwarg = 'course_id'
-    permission_classes = [IsAuthenticated, LoginOnlySuperUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -205,3 +211,52 @@ class PremiumCourse(ListAPIView):
     def get_queryset(self):
         return Course.objects.filter(is_premium = True)
 
+
+class RegsiterApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        full_name = request.data.get("full_name")
+        password = request.data.get("password")
+
+        if not email or not password or not full_name:
+            return Response({"error": "Email, full_name va password kerak"}, status=HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "User already exists"}, status=HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(email=email, full_name=full_name, password=password)
+        token = get_or_create_token(user)
+        return Response({"token": token}, status=HTTP_201_CREATED)
+    
+
+class LoginApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        if not email or not password:
+            return Response({"error": "Email and password are required"}, status=HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid credentials"}, status=HTTP_401_UNAUTHORIZED)
+
+        if not user.check_password(password):
+            return Response({"error": "Invalid credentials"}, status=HTTP_401_UNAUTHORIZED)
+
+        token = get_or_create_token(user)
+        return Response({"token": token}, status=HTTP_200_OK)
+    
+
+class LogoutApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({"message": "Logged out successfully"}, status=HTTP_200_OK)
+    
