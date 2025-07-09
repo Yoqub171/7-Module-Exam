@@ -19,6 +19,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from education.api.views import CustomTokenObtainPairView
 
 
 urlpatterns = [
@@ -27,7 +32,8 @@ urlpatterns = [
     path('users/', include('users.urls', namespace='users')),
     path('auth/', include('social_django.urls', namespace='social')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api-token-auth/', views.obtain_auth_token)
-    
+    path('api-token-auth/', views.obtain_auth_token),
+    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

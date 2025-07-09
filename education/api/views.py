@@ -1,16 +1,33 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from ..models import Subject, Course, Comment, Rating
-from rest_framework.status import HTTP_404_NOT_FOUND,HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
-from .serializers import SubjectModelSerializers, CourseModelSerializers, CommentSerializers, RatingSerializers
+from rest_framework.status import (
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED, HTTP_204_NO_CONTENT
+)
+from .serializers import SubjectModelSerializers, CourseModelSerializers, CommentSerializers, RatingSerializers, LogoutSerizlizer
 from django.db.models import Avg, Count
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import MondayFriday, IsOwnerOrReadOnly, JohnReadOnly, IsJohnBlocked, CanReadPremiumCourse, IsEvenYear, LoginOnlySuperUser, PutPatchOnly
+from .permissions import (
+    MondayFriday,
+    IsOwnerOrReadOnly,
+    JohnReadOnly,
+    IsJohnBlocked,
+    CanReadPremiumCourse,
+    IsEvenYear,
+    LoginOnlySuperUser,
+    PutPatchOnly
+)
 from .tokens import get_or_create_token
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializers
+
 
 User = get_user_model()
 
@@ -135,6 +152,8 @@ User = get_user_model()
 class SubjectListCreateAPIView(ListCreateAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectModelSerializers
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
     def get_queryset(self):
         queryset = Subject.objects.all()
@@ -257,6 +276,10 @@ class LogoutApiView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        request.user.auth_token.delete()
-        return Response({"message": "Logged out successfully"}, status=HTTP_200_OK)
-    
+        serializer = LogoutSerizlizer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Successfully logged out"}, status=HTTP_204_NO_CONTENT)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializers

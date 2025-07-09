@@ -2,6 +2,7 @@ from rest_framework.routers import DefaultRouter
 from .views import SubjectListCreateAPIView, SubjectDetailAPIView, CourseListCreateAPIView, CourseDetailAPIView, CommentViewSet, RatingViewSet, PremiumCourse, LoginApiView, RegsiterApiView, LogoutApiView
 from django.urls import path, include
 
+
 router = DefaultRouter()
 router.register(r'comments', CommentViewSet)
 router.register(r'ratings', RatingViewSet)
