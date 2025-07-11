@@ -1,5 +1,6 @@
 from rest_framework.routers import DefaultRouter
-from .views import SubjectListCreateAPIView, SubjectDetailAPIView, CourseListCreateAPIView, CourseDetailAPIView, CommentViewSet, RatingViewSet, PremiumCourse, LoginApiView, RegsiterApiView, LogoutApiView
+from .views import SubjectListCreateAPIView, SubjectDetailAPIView, CourseListCreateAPIView, CourseDetailAPIView, CommentViewSet, RatingViewSet, PremiumCourse, LoginApiView, RegsiterApiView, LogoutApiView, SubjectCourseListAPIView
+
 from django.urls import path, include
 
 
@@ -22,6 +23,7 @@ urlpatterns = [
     path('subjects/<int:subject_id>',SubjectDetailAPIView.as_view()),
     path('course_list/',CourseListCreateAPIView.as_view()),
     path('course_detail/<int:course_id>',CourseDetailAPIView.as_view()),
+    path('subjects/<int:subject_id>/courses/',SubjectCourseListAPIView.as_view()),
     path('premium_courses/', PremiumCourse.as_view()),
     path('register/', RegsiterApiView.as_view()),
     path("login/", LoginApiView.as_view()),

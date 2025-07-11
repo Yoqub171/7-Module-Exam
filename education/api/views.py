@@ -9,7 +9,7 @@ from rest_framework.status import (
 from .serializers import SubjectModelSerializers, CourseModelSerializers, CommentSerializers, RatingSerializers, LogoutSerizlizer
 from django.db.models import Avg, Count
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, authentication, pagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import (
     MondayFriday,
@@ -27,7 +27,8 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializers
-
+from django.db.models import Prefetch
+from .pagination import MyPagination
 
 User = get_user_model()
 
@@ -150,16 +151,19 @@ User = get_user_model()
 
 
 class SubjectListCreateAPIView(ListCreateAPIView):
-    queryset = Subject.objects.all()
     serializer_class = SubjectModelSerializers
     permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     
     def get_queryset(self):
-        queryset = Subject.objects.all()
-        queryset = queryset.annotate(course_count=Count('courses'))
-        queryset = queryset.order_by('course_count')
+        courses  = Course.objects.prefetch_related('modules').annotate(module_count=Count('modules'))
+
+        queryset = Subject.objects.annotate(course_count=Count('courses'))
+        queryset = queryset.prefetch_related(Prefetch('courses', queryset=courses ))
+        queryset = queryset.order_by('-course_count')
+
         return queryset
+
     
     
 class SubjectDetailAPIView(RetrieveUpdateDestroyAPIView):
@@ -168,21 +172,47 @@ class SubjectDetailAPIView(RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'subject_id'
 
 
+class SubjectCourseListAPIView(ListAPIView):
+    serializer_class = CourseModelSerializers
+    pagination_class = MyPagination
+
+    def get_queryset(self):
+        subject_id = self.kwargs['subject_id']
+        queryset = Course.objects.filter(subject_id = subject_id).order_by('id')
+        queryset = queryset.select_related('owner', 'subject')
+        queryset = queryset.prefetch_related('modules')
+        queryset = queryset.annotate(module_count=Count('modules'))
+        queryset = queryset.order_by('id')
+
+        return queryset
+    
+
+
 class CourseListCreateAPIView(ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseModelSerializers
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Course.objects.all().order_by('-id')
+        queryset = Course.objects.all()
+        queryset = queryset.select_related('owner', 'subject')
+        queryset = queryset.prefetch_related('modules')
+        queryset = queryset.annotate(module_count=Count('modules'))
+        queryset = queryset.order_by('-created')
+
         return queryset
-    
+
 
 class CourseDetailAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Course.objects.all().annotate(avg_rating = Avg('ratings__value'))
     serializer_class = CourseModelSerializers
     lookup_url_kwarg = 'course_id'
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Course.objects.all()
+        queryset = queryset.select_related('owner', 'subject')
+        queryset = queryset.prefetch_related('modules')
+        queryset = queryset.annotate(avg_rating=Avg('ratings__value'))
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()

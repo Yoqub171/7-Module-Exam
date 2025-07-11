@@ -13,7 +13,14 @@ class CourseModelSerializers(serializers.ModelSerializer):
         read_only = True
     )  
     username = serializers.CharField(source = 'owner.email')
+    module_count = serializers.SerializerMethodField()
+    modules = serializers.SerializerMethodField()
+
+    def get_module_count(self, obj):
+        return obj.modules.count()
     
+    def get_modules(self, obj):
+        return [{'id': m.id, 'title': m.title} for m in obj.modules.all()]
     
     class Meta:
         model = Course
@@ -77,4 +84,5 @@ class LogoutSerizlizer(serializers.Serializer):
             token = RefreshToken(self.token)
             token.blacklist()
         except TokenError:
-            self.fail('Token is invalid or expired  ')
+            self.fail('Token is invalid or expired')
+    

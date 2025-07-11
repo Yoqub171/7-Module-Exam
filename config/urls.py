@@ -24,6 +24,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from education.api.views import CustomTokenObtainPairView
+from debug_toolbar.toolbar import debug_toolbar_urls
+
 
 
 urlpatterns = [
@@ -37,3 +39,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += debug_toolbar_urls()
